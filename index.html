@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>साहित्यिक ब्लग</title>
+<meta name="description" content="कविता, निबन्ध र कथाहरूको व्यक्तिगत साहित्यिक ब्लग।">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Mukta:wght@400;600;800&family=Noto+Serif+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script>
+  try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body>
+<a class="skip" href="#app">मुख्य सामग्रीमा जानुहोस्</a>
+
+<header class="top">
+  <a class="brand" href="#/" id="brand"></a>
+  <button id="burger" class="burger" type="button" aria-label="मेनु खोल्नुहोस्" aria-expanded="false" aria-controls="nav">☰</button>
+  <nav id="nav" aria-label="मुख्य मेनु">
+    <a href="#/" data-r="home">गृहपृष्ठ</a>
+    <a href="#/about" data-r="about">परिचय</a>
+    <a href="#/writings" data-r="writings">लेखहरू</a>
+    <div class="drop">
+      <button type="button" class="drop-btn" aria-haspopup="true">विधा ▾</button>
+      <div class="drop-menu" id="dropmenu"></div>
+    </div>
+  </nav>
+  <button id="theme" type="button" aria-label="उज्यालो/अँध्यारो रङ बदल्नुहोस्">◐</button>
+</header>
+
+<main id="app" tabindex="-1"></main>
+
+<footer class="foot">
+  <p>© <span id="year"></span> <span id="foot-name"></span>। सबै लेख लेखकका आफ्नै हुन्।</p>
+</footer>
+
+<script src="posts.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
