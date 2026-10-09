@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>एडमिन प्यानल</title>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;800&family=Noto+Serif+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f7fb;--ink:#1f1f1f;--soft:#666b73;--line:#dde2ea;--card:#fff;--red:#e8503f;--blue:#8fa9d6;--blue-soft:#e9eff9}
+@media (prefers-color-scheme:dark){:root{--bg:#12161d;--ink:#eef0f4;--soft:#a0a8b5;--line:#262d38;--card:#1b212b;--blue-soft:#202a3d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:1.05rem/1.6 "Mukta",system-ui,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:1.2rem 1rem 4rem}
+h1{font-size:1.6rem;margin:.2rem 0}
+h2{font-size:1.25rem;margin:0 0 .8rem}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.2rem;margin:1rem 0}
+label{display:block;font-weight:600;margin:.8rem 0 .25rem}
+input,textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:.6rem .8rem}
+textarea{min-height:360px;line-height:1.9;font-family:"Noto Serif Devanagari",Georgia,serif;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:.55rem 1.4rem;cursor:pointer;background:var(--red);color:#fff}
+button.sec{background:none;color:var(--ink);border:1px solid var(--line)}
+button.del{background:none;color:var(--red);border:1px solid var(--red)}
+button:disabled{opacity:.5;cursor:wait}
+.hint{color:var(--soft);font-size:.9rem;margin:.25rem 0 0}
+.actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.2rem}
+.chk{display:flex;gap:.6rem;align-items:center;font-weight:600;margin-top:.8rem}
+.chk input{width:auto}
+#msg{position:sticky;top:.6rem;z-index:5;padding:.7rem 1rem;border-radius:12px;display:none;font-weight:600}
+#msg.ok{display:block;background:#e5f3e8;color:#1d5d34}
+#msg.err{display:block;background:#fde6e2;color:#a8301f}
+#msg.info{display:block;background:var(--blue-soft);color:var(--ink)}
+.item{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.7rem 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item small{color:var(--soft);display:block}
+.item .b{display:flex;gap:.5rem;flex-shrink:0}
+.item button{padding:.3rem .9rem;font-size:.95rem}
+#preview{font:1.15rem/1.9 "Noto Serif Devanagari",Georgia,serif}
+#preview blockquote{margin:1rem 0;padding:.6rem 1rem;background:var(--blue-soft);border-left:5px solid var(--blue);border-radius:0 12px 12px 0}
+details summary{cursor:pointer;font-weight:600}
+code{background:var(--blue-soft);padding:.05rem .4rem;border-radius:6px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar"><h1>✍️ एडमिन प्यानल</h1><a href="./" style="color:var(--red);font-weight:600">← साइट हेर्नुहोस्</a></div>
+  <div id="msg" role="status"></div>
+
+  <!-- सेटिङ -->
+  <div class="card" id="setup">
+    <details id="setupBox">
+      <summary>⚙️ GitHub जडान (एक पटक मात्र)</summary>
+      <div class="row">
+        <div><label for="owner">GitHub username</label><input id="owner" placeholder="जस्तै: muktipoudel"></div>
+        <div><label for="repo">Repository नाम</label><input id="repo" placeholder="जस्तै: muktipoudel.com.np"></div>
+      </div>
+      <div class="row">
+        <div><label for="branch">Branch</label><input id="branch" value="main"></div>
+        <div><label for="token">Access Token</label><input id="token" type="password" placeholder="github_pat_..." autocomplete="off"></div>
+      </div>
+      <p class="hint">Token तपाईंकै ब्राउजरमा मात्र सेभ हुन्छ, कतै पठाइँदैन। Token बनाउन: GitHub → Settings → Developer settings → Fine-grained tokens → यही repository मात्र रोज्नुहोस् → Permissions: <b>Contents = Read and write</b>।</p>
+      <div class="actions"><button id="saveCfg" type="button">सेभ गरी जोड्नुहोस्</button><button id="forget" type="button" class="sec">Token मेटाउनुहोस्</button></div>
+    </details>
+  </div>
+
+  <!-- सम्पादक -->
+  <div class="card" id="editor">
+    <h2 id="edTitle">नयाँ रचना</h2>
+    <label for="title">शीर्षक</label>
+    <input id="title" placeholder="रचनाको शीर्षक">
+    <div class="row">
+      <div>
+        <label for="category">विधा</label>
+        <input id="category" list="cats" placeholder="कविता / निबन्ध / कथा / नयाँ विधा">
+        <datalist id="cats"></datalist>
+      </div>
+      <div>
+        <label for="date">मिति (क्रमबद्ध गर्न)</label>
+        <input id="date" type="date">
+      </div>
+    </div>
+    <label for="dateText">पाठकले देख्ने मिति (नेपाली मिति)</label>
+    <input id="dateText" placeholder="जस्तै: २०८३ कार्तिक २३ — खाली छाडे अंग्रेजी मिति नेपाली अङ्कमा देखिन्छ">
+    <label for="excerpt">छोटो सार (ऐच्छिक)</label>
+    <input id="excerpt" placeholder="खाली छाडे पहिलो हरफ आफैँ लिइन्छ">
+    <label for="raw">रचना (यहाँ पेस्ट गर्नुहोस्)</label>
+    <textarea id="raw" placeholder="आफ्नो निबन्ध/कथा/कविता यहाँ पेस्ट वा टाइप गर्नुहोस्…"></textarea>
+    <p class="hint"><b>निबन्ध/कथा:</b> हरेक नयाँ हरफ = नयाँ अनुच्छेद। उद्धरण (quote) बनाउन हरफको सुरुमा <code>&gt; </code> राख्नुहोस्।<br><b>कविता:</b> तलको बाकस चिन्ह लगाउनुहोस् — पङ्क्ति जस्ताको तस्तै रहन्छ, खाली हरफले श्लोक छुट्याउँछ।</p>
+    <label class="chk"><input type="checkbox" id="poem"> यो कविता हो (पङ्क्ति/श्लोक जस्ताको तस्तै राख्नुहोस्)</label>
+    <div class="actions">
+      <button id="publish" type="button">🚀 प्रकाशित गर्नुहोस्</button>
+      <button id="prevBtn" type="button" class="sec">पूर्वावलोकन</button>
+      <button id="reset" type="button" class="sec">नयाँ / खाली गर्नुहोस्</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="prevCard"><h2>पूर्वावलोकन</h2><div id="preview"></div></div>
+
+  <!-- पुराना लेख -->
+  <div class="card">
+    <div class="bar"><h2>प्रकाशित लेखहरू</h2><button id="reload" type="button" class="sec">↻ ताजा गर्नुहोस्</button></div>
+    <div id="list"><p class="hint">GitHub जडान भएपछि लेखहरू यहाँ देखिन्छन्।</p></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var posts = [], sha = null, editingSlug = null;
+  var LS = "admin-cfg";
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function toNe(n) { return String(n).replace(/[0-9]/g, function (d) { return "०१२३४५६७८९"[d]; }); }
+  function msg(text, cls) { var m = $("msg"); m.textContent = text; m.className = cls || "info"; if (cls === "ok") setTimeout(function () { if (m.textContent === text) m.className = ""; }, 8000); window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+  /* ---------- सेटिङ ---------- */
+  function cfg() { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; } }
+  function fillCfg() {
+    var c = cfg();
+    $("owner").value = c.owner || ""; $("repo").value = c.repo || "";
+    $("branch").value = c.branch || "main"; $("token").value = c.token || "";
+    if (!c.token) $("setupBox").open = true;
+  }
+  $("saveCfg").onclick = function () {
+    var c = { owner: $("owner").value.trim(), repo: $("repo").value.trim(), branch: $("branch").value.trim() || "main", token: $("token").value.trim() };
+    if (!c.owner || !c.repo || !c.token) return msg("सबै बाकस भर्नुहोस्।", "err");
+    localStorage.setItem(LS, JSON.stringify(c));
+    $("setupBox").open = false;
+    loadPosts();
+  };
+  $("forget").onclick = function () { localStorage.removeItem(LS); $("token").value = ""; msg("Token यो ब्राउजरबाट मेटियो।", "ok"); };
+
+  /* ---------- GitHub API ---------- */
+  function b64enc(str) { var b = new TextEncoder().encode(str), s = ""; for (var i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
+  function b64dec(b64) { var s = atob(b64.replace(/\s/g, "")), b = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return new TextDecoder().decode(b); }
+  function api(method, body) {
+    var c = cfg();
+    var url = "https://api.github.com/repos/" + encodeURIComponent(c.owner) + "/" + encodeURIComponent(c.repo) + "/contents/posts.json" + (method === "GET" ? "?ref=" + encodeURIComponent(c.branch) + "&t=" + Date.now() : "");
+    return fetch(url, {
+      method: method,
+      headers: { "Authorization": "Bearer " + c.token, "Accept": "application/vnd.github+json", "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined
+    }).then(function (r) {
+      return r.json().then(function (j) {
+        if (!r.ok) { var e = new Error(j.message || r.status); e.status = r.status; throw e; }
+        return j;
+      });
+    });
+  }
+  function loadPosts() {
+    var c = cfg();
+    if (!c.token) return;
+    msg("लेखहरू लोड हुँदैछन्…", "info");
+    return api("GET").then(function (j) {
+      sha = j.sha; posts = JSON.parse(b64dec(j.content));
+      $("msg").className = ""; render();
+    }).catch(function (e) {
+      msg("लोड हुन सकेन: " + e.message + (e.status === 401 || e.status === 403 || e.status === 404 ? " — username, repo नाम र token जाँच गर्नुहोस्।" : ""), "err");
+    });
+  }
+  function commit(message) {
+    var c = cfg();
+    return api("PUT", { message: message, content: b64enc(JSON.stringify(posts, null, 2) + "\n"), sha: sha, branch: c.branch })
+      .then(function (j) { sha = j.content.sha; render(); });
+  }
+
+  /* ---------- पाठ → HTML ---------- */
+  function toHtml(raw, poem) {
+    raw = raw.replace(/\r/g, "").trim();
+    if (poem) {
+      return '<div class="poem">' + raw.split(/\n{2,}/).map(function (st) {
+        return "<p>" + st.split("\n").map(function (l) { return esc(l.trim()); }).join("<br>") + "</p>";
+      }).join("\n") + "</div>";
+    }
+    return raw.split(/\n+/).map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
+      return /^>/.test(l) ? "<blockquote>" + esc(l.replace(/^>\s*/, "")) + "</blockquote>" : "<p>" + esc(l) + "</p>";
+    }).join("\n");
+  }
+  function htmlToRaw(html, poem) {
+    var d = document.createElement("div"); d.innerHTML = html;
+    var out = [];
+    d.querySelectorAll("p, blockquote").forEach(function (el) {
+      var t = el.cloneNode(true);
+      t.querySelectorAll("br").forEach(function (b) { b.replaceWith("\n"); });
+      var s = t.textContent.trim();
+      out.push(el.tagName === "BLOCKQUOTE" ? "> " + s : s);
+    });
+    return out.join(poem ? "\n\n" : "\n");
+  }
+  var MONTHS = ["जनवरी","फेब्रुअरी","मार्च","अप्रिल","मे","जुन","जुलाई","अगस्ट","सेप्टेम्बर","अक्टोबर","नोभेम्बर","डिसेम्बर"];
+  function fallbackDateText(iso) { var p = iso.split("-"); return toNe(p[0]) + " " + MONTHS[+p[1] - 1] + " " + toNe(+p[2]); }
+  function today() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+
+  /* ---------- सम्पादक ---------- */
+  function resetForm() {
+    editingSlug = null;
+    ["title", "category", "dateText", "excerpt", "raw"].forEach(function (k) { $(k).value = ""; });
+    $("date").value = today(); $("poem").checked = false;
+    $("edTitle").textContent = "नयाँ रचना"; $("publish").textContent = "🚀 प्रकाशित गर्नुहोस्";
+    $("prevCard").classList.add("hidden");
+  }
+  $("reset").onclick = resetForm;
+  $("category").addEventListener("change", function () { if (/कविता/.test($("category").value) && !editingSlug) $("poem").checked = true; });
+  $("prevBtn").onclick = function () {
+    $("preview").innerHTML = "<h3>" + esc($("title").value) + "</h3>" + toHtml($("raw").value, $("poem").checked);
+    $("prevCard").classList.remove("hidden");
+    $("prevCard").scrollIntoView({ behavior: "smooth" });
+  };
+
+  function generateExcerpt(raw) {
+    var first = raw.replace(/\r/g, "").trim().split("\n")[0].replace(/^>\s*/, "").trim();
+    return first.length > 90 ? first.slice(0, 90).replace(/\s+\S*$/, "") + "…" : first;
+  }
+
+  $("publish").onclick = function () {
+    var title = $("title").value.trim(), category = $("category").value.trim(), raw = $("raw").value.trim();
+    var date = $("date").value || today();
+    if (!title || !category || !raw) return msg("शीर्षक, विधा र रचना अनिवार्य छन्।", "err");
+    if (!cfg().token) { $("setupBox").open = true; return msg("पहिले GitHub जडान गर्नुहोस्।", "err"); }
+    var poem = $("poem").checked;
+    var existing = editingSlug ? posts.filter(function (p) { return p.slug === editingSlug; })[0] : null;
+    var post = {
+      slug: existing ? existing.slug : "post-" + Date.now().toString(36),
+      title: title, date: date,
+      dateText: $("dateText").value.trim() || fallbackDateText(date),
+      category: category,
+      excerpt: $("excerpt").value.trim() || generateExcerpt(raw),
+      body: toHtml(raw, poem), raw: raw, poem: poem
+    };
+    var btn = $("publish"); btn.disabled = true; msg("प्रकाशित हुँदैछ…", "info");
+    function attempt(retry) {
+      if (existing) posts = posts.map(function (p) { return p.slug === post.slug ? post : p; }); else posts.unshift(post);
+      return commit((existing ? "लेख सम्पादन: " : "नयाँ लेख: ") + title).catch(function (e) {
+        if (e.status === 409 && !retry) { // अरू ठाउँबाट फेरिएछ — ताजा लिएर फेरि
+          return api("GET").then(function (j) { sha = j.sha; posts = JSON.parse(b64dec(j.content)); existing = posts.filter(function (p) { return p.slug === post.slug; })[0] || null; return attempt(true); });
+        }
+        throw e;
+      });
+    }
+    attempt(false).then(function () {
+      msg("✅ सफल! साइटमा देखिन १–२ मिनेट लाग्छ (GitHub Pages ले बनाउँदैछ)।", "ok");
+      resetForm();
+    }).catch(function (e) {
+      msg("प्रकाशित हुन सकेन: " + e.message, "err"); loadPosts();
+    }).then(function () { btn.disabled = false; });
+  };
+
+  /* ---------- सूची ---------- */
+  function render() {
+    var cats = posts.map(function (p) { return p.category; }).filter(function (c, i, a) { return a.indexOf(c) === i; });
+    $("cats").innerHTML = cats.map(function (c) { return '<option value="' + esc(c) + '">'; }).join("");
+    var sorted = posts.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
+    $("list").innerHTML = sorted.length ? sorted.map(function (p) {
+      return '<div class="item"><div><strong>' + esc(p.title) + '</strong><small>' + esc(p.category) + ' · ' + esc(p.dateText) + '</small></div>' +
+        '<div class="b"><button class="sec" data-e="' + esc(p.slug) + '">सम्पादन</button><button class="del" data-d="' + esc(p.slug) + '">मेट्नुहोस्</button></div></div>';
+    }).join("") : '<p class="hint">अहिलेसम्म कुनै लेख छैन।</p>';
+  }
+  $("list").addEventListener("click", function (e) {
+    var s = e.target.dataset.e, d = e.target.dataset.d;
+    if (s) {
+      var p = posts.filter(function (x) { return x.slug === s; })[0];
+      editingSlug = s;
+      $("title").value = p.title; $("category").value = p.category; $("date").value = p.date;
+      $("dateText").value = p.dateText; $("excerpt").value = p.excerpt;
+      var poem = p.poem != null ? p.poem : /class="poem"/.test(p.body);
+      $("poem").checked = poem; $("raw").value = p.raw || htmlToRaw(p.body, poem);
+      $("edTitle").textContent = "सम्पादन: " + p.title; $("publish").textContent = "💾 परिवर्तन सेभ गर्नुहोस्";
+      $("editor").scrollIntoView({ behavior: "smooth" });
+    }
+    if (d) {
+      var q = posts.filter(function (x) { return x.slug === d; })[0];
+      if (!confirm("“" + q.title + "” साँच्चै मेट्ने?")) return;
+      posts = posts.filter(function (x) { return x.slug !== d; });
+      msg("मेटिँदैछ…", "info");
+      commit("लेख मेटियो: " + q.title).then(function () { msg("मेटियो। साइटमा १–२ मिनेटमा देखिन्छ।", "ok"); })
+        .catch(function (er) { msg("मेट्न सकिएन: " + er.message, "err"); loadPosts(); });
+    }
+  });
+  $("reload").onclick = loadPosts;
+
+  fillCfg(); resetForm(); loadPosts();
+})();
+</script>
+</body>
+</html>

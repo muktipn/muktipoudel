@@ -2,8 +2,7 @@
   "use strict";
   var app = document.getElementById("app");
   var state = { cat: "सबै", q: "" };
-  var posts = POSTS.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
-  var cats = posts.map(function (p) { return p.category; }).filter(function (c, i, a) { return a.indexOf(c) === i; });
+  var posts = [], cats = [];
 
   function toNe(n) { return String(n).replace(/[0-9]/g, function (d) { return "०१२३४५६७८९"[d]; }); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
@@ -156,6 +155,9 @@
   }
 
   /* ---------- सुरुवात ---------- */
+  function start(data) {
+    posts = data.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
+    cats = posts.map(function (p) { return p.category; }).filter(function (c, i, a) { return a.indexOf(c) === i; });
   document.getElementById("brand").textContent = SITE.brand;
   document.getElementById("foot-name").textContent = SITE.name;
   document.getElementById("year").textContent = toNe(new Date().getFullYear());
@@ -174,4 +176,9 @@
   });
   window.addEventListener("hashchange", route);
   route();
+  }
+  app.innerHTML = '<p class="empty" style="text-align:center;padding:4rem 1rem">लोड हुँदैछ…</p>';
+  fetch("posts.json?v=" + Date.now()).then(function (r) { return r.json(); }).then(start).catch(function () {
+    app.innerHTML = '<p class="empty" style="text-align:center;padding:4rem 1rem">लेखहरू लोड हुन सकेनन्। पछि प्रयास गर्नुहोस्।</p>';
+  });
 })();
