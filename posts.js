@@ -1,19 +1,19 @@
 /* ===== १. साइटको सेटिङ — यहाँ आफ्नो विवरण राख्नुहोस् ===== */
 const SITE = {
-  brand: "शब्दका पाइला",          // माथि बायाँ देखिने ब्लगको नाम
+  brand: "मनको प्रतिविम्ब",          // माथि बायाँ देखिने ब्लगको नाम
   name: "मुक्ति नेपाली",            // हिरोमा देखिने ठूलो नाम
-  hello: "नमस्ते,",          // नामको माथिको सानो बबल
+  hello: "स्वागतम्,",          // नामको माथिको सानो बबल
   role: 'कवि, <span class="red">निबन्धकार</span> र<br>कथा<span class="blue">लेखक</span>',
   button: "लेख पढ्नुहोस्",
   photo: "mukti.jpg",             // आफ्नो फोटो (पारदर्शी PNG राम्रो) — यही नामले राख्नुहोस्
-  email: "you@example.com",
+  email: "muktipn@gmail.com",
   about: [
     "नमस्ते! म यहाँ आफ्ना कविता, निबन्ध र कथाहरू राख्छु। यो अनुच्छेद आफ्नै परिचयले बदल्नुहोस्।",
     "शब्दले मलाई हिँड्न सिकायो — यहाँ ती पाइलाहरूको लेखाजोखा छ।"
   ],
   social: [ // चाहिँदैन भने यो सूची खाली [] राख्नुहोस्
-    { label: "Facebook", url: "https://facebook.com/" },
-    { label: "Instagram", url: "https://instagram.com/" }
+    { label: "Facebook", url: "https://facebook.com/muktipn" },
+    { label: "youtube", url: "https://www.youtube.com/@muktinepali6863" }
   ]
 };
 
